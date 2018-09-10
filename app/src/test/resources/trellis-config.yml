@@ -74,3 +74,5 @@ jsonld:
     contextWhitelist:
         - http://www.w3.org/ns/anno.jsonld
 
+binaryHierarchyLength: 2
+binaryHierarchyLevels: 2

@@ -23,7 +23,7 @@ ext {
     slf4jVersion = '1.7.25'
     snakeyamlVersion = '1.23'
     tamayaVersion = '0.3-incubating'
-    trellisVersion = '0.7.3'
+    trellisVersion = '0.8.0-SNAPSHOT'
 
     /* Databases */
     mysqlVersion = '8.0.12'
@@ -72,6 +72,9 @@ allprojects { subproj ->
         mavenCentral()
         jcenter()
         mavenLocal()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
 
     dependencies {
@@ -356,18 +359,18 @@ configure(rootProject) {
         }
     }
 
-	task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-		dependsOn = subprojects.test
-		additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-		sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-		classDirectories =  files(subprojects.sourceSets.main.output)
+    task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+        dependsOn = subprojects.test
+        additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+        sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+        classDirectories =  files(subprojects.sourceSets.main.output)
         executionData = files(subprojects.findAll { it.name != 'trellis-db-deployment' }.jacocoTestReport.executionData)
-		reports {
-			html.enabled = true
-			xml.enabled = true
-			csv.enabled = false
-		}
-	}
+        reports {
+            html.enabled = true
+            xml.enabled = true
+            csv.enabled = false
+        }
+    }
 
     coveralls {
         sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
