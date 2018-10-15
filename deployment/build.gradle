@@ -1,3 +1,4 @@
+apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'distribution'
 apply plugin: 'nebula.ospackage-application'
@@ -10,14 +11,6 @@ dependencies {
     compile project(':trellis-db-app')
 
     runtime("javax.xml.bind:jaxb-api:$jaxbVersion")
-}
-
-// Get commit id of HEAD.
-apply plugin: 'java'
-apply plugin: 'application'
-ext {
-    git = grgit.open() // file('../.'))
-    revision = git.head().id
 }
 
 ospackage {
@@ -75,7 +68,16 @@ docker {
     dockerfile file('src/docker/Dockerfile')
     files tasks.distTar.outputs, 'deployment/src/dist/etc/config.yml','deployment/src/docker/command.sh'
     buildArgs([BUILD_VERSION: trellisVersion])
-    labels(['git.url':'https://github.com/trellis-ldp/trellis-ext-db', 'git.commit':revision])
+    def describe = 'unknown'
+    def url = 'unknown'
+    try {
+        def git = grgit.open()
+        describe = git.head().abbreviatedId
+        url = git.remote.list().find({ it.name == 'origin' }).url
+    } catch (all) {
+        println(all)
+    }
+    labels(['git.commit.id.describe': describe, 'git.remote.origin.url': url])
     pull false
     noCache false
 }
